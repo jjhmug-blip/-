@@ -10,7 +10,7 @@
 
   :root {
     /* 네이비 다크 테마 팔레트 */
-    --bg: #050b1e;          /* 전체 배경 네이비 */
+    --bg: #1a2a52;          /* 전체 배경 네이비 */
     --card-bg: #101a35;     /* 카드 배경 (조금 더 밝은 네이비) */
     --card-border: #24335a; /* 카드 테두리 */
     --text: #f4f6fb;        /* 기본 글자색 (밝은 회백색) */
@@ -320,9 +320,12 @@
         </label>
 
         <label>필요한 물품은 무엇입니까?
-          <input type="text" id="itemInput" placeholder="예: 우유 3팩" required />
+          <input type="text" id="itemInput" placeholder="예: 우유, 원두" required />
         </label>
 
+        <label>발주자 이름은 무엇입니까?
+  <input type="text" id="ordererInput" placeholder="예: 홍길동" required />
+</label>
         <button type="submit" id="submitBtn">전송하기</button>
         <button type="button" id="closeModal">닫기</button>
       </form>
