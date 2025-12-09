@@ -9,7 +9,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
 
     :root {
-      --bg: #0a1a3a;
+      --bg: #001f3f; /* ← 네이비색 */
       --card-bg: #ffe0b2;
       --card-border: #ffb74d;
       --text: #ffffff;
@@ -20,12 +20,17 @@
 
     * { box-sizing: border-box; }
 
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg); /* 전체 화면 네이비 적용 */
+    }
+
     body {
       font-family: 'Noto Sans KR', sans-serif;
       padding: 24px;
       max-width: 760px;
-      margin: auto;
-      background: var(--bg);
+      margin: 0 auto;
       color: var(--text);
       position: relative;
     }
