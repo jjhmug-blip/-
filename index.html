@@ -5,288 +5,292 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>의왕시니어클럽 카페 물품 현황판</title>
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+ <style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
 
-    :root {
-      --bg: #142850;
-      --card-bg: #ffe0b2;
-      --card-border: #ffb74d;
-      --text: #000000;
-      --accent: #ff8a50;
-      --accent-dark: #ff7043;
-      --accent-light: #ffcc80;
-    }
+  :root {
+    /* 네이비 다크 테마 팔레트 */
+    --bg: #050b1e;          /* 전체 배경 네이비 */
+    --card-bg: #101a35;     /* 카드 배경 (조금 더 밝은 네이비) */
+    --card-border: #24335a; /* 카드 테두리 */
+    --text: #f4f6fb;        /* 기본 글자색 (밝은 회백색) */
+    --text-muted: #9aa4c6;  /* 날짜/설명 같은 보조 텍스트 */
+    --accent: #ff8a50;      /* 포인트 색 (버튼/제목 등) */
+    --accent-dark: #ff7043;
+    --accent-light: #ffb480;
+  }
 
-    * { box-sizing: border-box; }
+  * { box-sizing: border-box; }
 
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: var(--bg);
-    }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    padding: 24px;
+    max-width: 760px;
+    margin: auto;
+    background: var(--bg);
+    color: var(--text);
+    position: relative;
+  }
 
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      padding: 24px;
-      max-width: 760px;
-      margin: 0 auto;
-      color: var(--text);
-      position: relative;
-    }
+  h1 {
+    text-align: center;
+    color: var(--accent-light);
+    margin-bottom: 28px;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
 
-    h1 {
-      text-align: center;
-      color: #ffa35b
-      margin-bottom: 28px;
-      font-size: 2rem;
-    }
+  #refreshBtn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+  }
+  #refreshBtn:hover {
+    background: var(--card-bg);
+    color: var(--accent-light);
+    border-color: var(--accent-light);
+  }
 
-    #refreshBtn {
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      background: var(--accent-light);
-      color: #6d4c41;
-      border: none;
-      border-radius: 10px;
-      padding: 6px 12px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-    }
-    #refreshBtn:hover {
-      background: var(--accent);
-      color: #fff;
-    }
+  #list { margin-bottom: 30px; }
 
-    #list { margin-bottom: 30px; }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      padding: 18px 20px;
-      margin-bottom: 18px;
-      border-radius: 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
+  .card h3 {
+    margin: 0 0 10px;
+    font-size: 1.2rem;
+    color: var(--accent-light);
+  }
 
-    .card h3 {
-      margin: 0 0 10px;
-      font-size: 1.3rem;
-      color: #c24e10;
-    }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+  }
 
-    ul {
-      list-style: none;
-      margin: 0;
-      padding-left: 0;
-    }
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
 
-    li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin: 10px 0;
-      font-size: 1rem;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.4);
-    }
+  li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
 
-    li:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
+  .item-info { flex: 1; }
 
-    .item-info { flex: 1; }
+  .item-name {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 2px;
+    color: var(--text);
+  }
 
-    .item-name {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 2px;
-    }
+  .item-time {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
 
-    .item-time {
-      display: block;
-      color: #8d6e63;
-      font-size: 0.85rem;
-    }
+  .delete-btn {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    color: #000;                 /* 버튼 글씨 검은색 */
+    background: var(--accent);
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .delete-btn:hover { background: var(--accent-dark); }
 
-    .delete-btn {
-      font-size: 0.8rem;
-      padding: 3px 8px;
-      color: #fff;
-      background: var(--accent);
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .delete-btn:hover { background: var(--accent-dark); }
+  #openModal {
+    display: block;
+    margin: 34px auto;
+    font-size: 1.15rem;
+    padding: 14px 34px;
+    background: var(--accent);
+    color: #000;                 /* 검은색 굵은 글씨 */
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+    font-weight: 600;
+  }
+  #openModal:hover { background: var(--accent-dark); }
 
-    #openModal {
-      display: block;
-      margin: 34px auto;
-      font-size: 1.25rem;
-      padding: 18px 38px;
-      background: #ff7043;
-      color: #fff;
-      border: none;
-      border-radius: 16px;
-      cursor: pointer;
-      box-shadow: 0 6px 18px rgba(255,112,67,0.35);
-    }
-    #openModal:hover { background: #ff5722; }
+  /* 입력 모달 배경 */
+  #modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 999;
+  }
 
-    #modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 999;
-    }
+  #modalContent {
+    background: #0c1430;
+    width: 90%;
+    max-width: 440px;
+    border-radius: 18px;
+    padding: 28px 26px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+    color: var(--text);
+  }
 
-    #modalContent {
-      background: #fff;
-      width: 90%;
-      max-width: 440px;
-      border-radius: 18px;
-      padding: 28px 26px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-    }
+  #modalContent h2 {
+    margin: 0 0 12px;
+    color: var(--accent-light);
+    font-size: 1.4rem;
+  }
 
-    #modalContent h2 {
-      margin: 0 0 12px;
-      color: #d84315;
-      font-size: 1.5rem;
-    }
+  label {
+    display: block;
+    font-size: 1rem;
+    margin-top: 16px;
+  }
 
-    label {
-      display: block;
-      font-size: 1.1rem;
-      margin-top: 16px;
-    }
+  select,
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 11px 12px;
+    font-size: 1rem;
+    margin-top: 8px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    background: #050b1e;
+    color: var(--text);
+  }
 
-    select, input[type="text"] {
-      width: 100%;
-      padding: 13px;
-      font-size: 1.1rem;
-      margin-top: 8px;
-      border-radius: 10px;
-      border: 1px solid var(--accent-light);
-      background: #fffaf2;
-    }
+  #modalContent button {
+    margin-top: 18px;
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
 
-    #modalContent button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 14px;
-      font-size: 1.05rem;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-    }
+  #submitBtn {
+    background: var(--accent);
+    color: #000;
+    font-weight: 600;
+  }
+  #submitBtn:hover { background: var(--accent-dark); }
 
-    #submitBtn {
-      background: var(--accent);
-      color: #fff;
-    }
-    #submitBtn:hover { background: var(--accent-dark); }
+  #closeModal {
+    background: #1b233d;
+    color: var(--text);
+  }
 
-    #closeModal {
-      background: #eceff1;
-      color: #5d4037;
-    }
+  /* 확인 모달 */
+  #confirmModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+  }
 
-    /* 확인 모달 */
-    #confirmModal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 1000;
-    }
+  #confirmContent {
+    background: #0c1430;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 18px;
+    padding: 28px 26px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+    text-align: center;
+    color: var(--text);
+  }
 
-    #confirmContent {
-      background: #fff;
-      width: 90%;
-      max-width: 400px;
-      border-radius: 18px;
-      padding: 28px 26px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-      text-align: center;
-    }
+  #confirmContent h3 {
+    margin: 0 0 10px;
+    font-size: 1.3rem;
+    color: var(--accent-light);
+  }
 
-    #confirmContent h3 {
-      margin: 0 0 10px;
-      font-size: 1.4rem;
-      color: #d84315;
-    }
+  #confirmMessage {
+    margin: 0 0 16px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
 
-    #confirmMessage {
-      margin: 0 0 16px;
-      line-height: 1.6;
-      color: #5d4037;
-    }
+  #confirmPasswordWrapper {
+    display: none;
+    margin-bottom: 16px;
+    text-align: left;
+  }
 
-    #confirmPasswordWrapper {
-      display: none;
-      margin-bottom: 16px;
-      text-align: left;
-    }
+  #confirmPasswordWrapper label {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
 
-    #confirmPasswordWrapper label {
-      font-size: 0.95rem;
-      color: #5d4037;
-    }
+  #confirmPassword {
+    margin-top: 6px;
+  }
 
-    #confirmPassword {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      border-radius: 10px;
-      border: 1px solid var(--accent-light);
-      background: #fffaf2;
-      font-size: 1rem;
-    }
+  #confirmButtons {
+    display: flex;
+    gap: 12px;
+  }
 
-    #confirmButtons {
-      display: flex;
-      gap: 12px;
-    }
+  #confirmButtons button {
+    flex: 1;
+    padding: 11px 0;
+    font-size: 0.95rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  }
 
-    #confirmButtons button {
-      flex: 1;
-      padding: 12px 0;
-      font-size: 1rem;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-    }
+  #confirmYes {
+    background: var(--accent);
+    color: #000;
+    font-weight: 600;
+  }
+  #confirmYes:hover { background: var(--accent-dark); }
 
-    #confirmYes {
-      background: var(--accent);
-      color: #fff;
-    }
-    #confirmYes:hover { background: var(--accent-dark); }
+  #confirmNo {
+    background: #1b233d;
+    color: var(--text);
+  }
 
-    #confirmNo {
-      background: #eceff1;
-      color: #5d4037;
-    }
-
-    @media (max-width: 520px) {
-      li { flex-direction: column; align-items: flex-start; }
-      .delete-btn { align-self: flex-end; }
-    }
-  </style>
+  @media (max-width: 520px) {
+    li { flex-direction: column; align-items: flex-start; }
+    .delete-btn { align-self: flex-end; }
+  }
+</style>
 </head>
 
 <body>
