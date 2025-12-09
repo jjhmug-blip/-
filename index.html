@@ -448,13 +448,15 @@
         return acc;
       }, {});
 
-      const cafeEntries = Object.entries(grouped)
-        .map(([cafe, items]) => {
-          items.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-          const oldest = items[0]?.created_at || null;
-          return { cafe, items, oldest };
-        })
-        .sort((a, b) => new Date(a.oldest) - new Date(b.oldest));
+    const cafeEntries = Object.entries(grouped)
+  .map(([cafe, items]) => {
+    // ✅ 각 카페 안에서도 최신 발주가 위로 오게
+    items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const newest = items[0]?.created_at || null; // 가장 최근 것
+    return { cafe, items, newest };
+  })
+  // ✅ 최근에 발주된 카페 카드가 위로 오게
+  .sort((a, b) => new Date(b.newest) - new Date(a.newest));
 
       cafeEntries.forEach(({ cafe, items }) => {
         const card = document.createElement('div');
