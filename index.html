@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>의왕시니어클럽 카페 물품 발주판</title>
+  <title>의왕시니어클럽 카페 물품 현황판</title>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
@@ -310,10 +310,6 @@
           </select>
         </label>
 
-        <label>발주자 이름은 무엇입니까?
-  <input type="text" id="ordererInput" placeholder="예: 홍길동" required />
-</label>
-        
         <label>필요한 물품은 무엇입니까?
           <input type="text" id="itemInput" placeholder="예: 우유 3팩" required />
         </label>
@@ -448,15 +444,13 @@
         return acc;
       }, {});
 
-    const cafeEntries = Object.entries(grouped)
-  .map(([cafe, items]) => {
-    // ✅ 각 카페 안에서도 최신 발주가 위로 오게
-    items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    const newest = items[0]?.created_at || null; // 가장 최근 것
-    return { cafe, items, newest };
-  })
-  // ✅ 최근에 발주된 카페 카드가 위로 오게
-  .sort((a, b) => new Date(b.newest) - new Date(a.newest));
+      const cafeEntries = Object.entries(grouped)
+        .map(([cafe, items]) => {
+          items.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+          const oldest = items[0]?.created_at || null;
+          return { cafe, items, oldest };
+        })
+        .sort((a, b) => new Date(a.oldest) - new Date(b.oldest));
 
       cafeEntries.forEach(({ cafe, items }) => {
         const card = document.createElement('div');
@@ -466,16 +460,13 @@
 
         items.forEach((item) => {
           const li = document.createElement('li');
-         li.innerHTML = `
-  <div class="item-info">
-    <span class="item-name">${item.item}</span>
-    <span class="item-time">
-      발주자: ${item.orderer || '미입력'}<br>
-      ${formatKSTWithRelative(item.created_at)}
-    </span>
-  </div>
-  <button class="delete-btn">삭제</button>
-`;
+          li.innerHTML = `
+            <div class="item-info">
+              <span class="item-name">${item.item}</span>
+              <span class="item-time">${formatKSTWithRelative(item.created_at)}</span>
+            </div>
+            <button class="delete-btn">삭제</button>
+          `;
           li.querySelector('button').addEventListener('click', () => {
             openConfirm({
               title: '삭제 확인',
@@ -500,10 +491,10 @@
     }
 
     async function loadData() {
-     const { data, error } = await supa
-  .from('shortages')
-  .select('*')
-  .order('created_at', { ascending: false }); // ★ 최신순
+      const { data, error } = await supa
+        .from('shortages')
+        .select('*')
+        .order('created_at', { ascending: true });
 
       if (error) {
         console.error('데이터 조회 오류:', error);
@@ -514,37 +505,28 @@
       renderShortages(data);
     }
 
-   form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const cafe = document.getElementById('cafeSelect').value;
-  const item = document.getElementById('itemInput').value.trim();
-  const orderer = document.getElementById('ordererInput').value.trim(); // ★ 추가
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const cafe = document.getElementById('cafeSelect').value;
+      const item = document.getElementById('itemInput').value.trim();
+      if (!cafe || !item) return;
 
-  // 세 칸 모두 필수
-  if (!cafe || !item || !orderer) return;
-
-  openConfirm({
-    title: '발주 전송',
-    message: `다음 내용으로 전송할까요?<br>
-      <strong>카페:</strong> ${cafe}<br>
-      <strong>발주자:</strong> ${orderer}<br>
-      <strong>물품:</strong> ${item}`,
-    onConfirm: async () => {
-      const { error } = await supa
-        .from('shortages')
-        .insert({ cafe, item, orderer }); // ★ 발주자도 함께 저장
-
-      if (error) {
-        console.error('입력 오류:', error);
-        alert('저장 중 오류가 발생했습니다: ' + error.message);
-        return;
-      }
-      form.reset();
-      modal.style.display = 'none';
-      loadData();
-    }
-  });
-});
+      openConfirm({
+        title: '발주 전송',
+        message: `다음 내용으로 전송할까요?<br><strong>카페:</strong> ${cafe}<br><strong>물품:</strong> ${item}`,
+        onConfirm: async () => {
+          const { error } = await supa.from('shortages').insert({ cafe, item });
+          if (error) {
+            console.error('입력 오류:', error);
+            alert('저장 중 오류가 발생했습니다: ' + error.message);
+            return;
+          }
+          form.reset();
+          modal.style.display = 'none';
+          loadData();
+        }
+      });
+    });
 
     openModalBtn.addEventListener('click', () => {
       modal.style.display = 'flex';
